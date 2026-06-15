@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEON TRANSPORT - Cyberpunk ESL Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #050505;
+            --panel-bg: rgba(10, 10, 15, 0.85);
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff003c;
+            --text-light: #e0e0e0;
+            --grid-color: rgba(0, 243, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            /* Cyberpunk Grid Background */
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-light);
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* Cyberpunk Container */
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--panel-bg);
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Neon Borders for Container */
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+        }
+
+        .screen {
+            display: none;
+            padding: 2.5rem 1.5rem;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+        }
+        
+        p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--text-light);
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-start { 
+            border-color: var(--neon-green); 
+            color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2) inset;
+        }
+        
+        .btn-start:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        /* Header / Scores */
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+        }
+
+        .score-box {
+            padding: 0.5rem 1rem;
+            border: 1px solid #333;
+            background: #000;
+        }
+        
+        .score-boys { 
+            border-color: var(--neon-cyan); 
+            color: var(--neon-cyan); 
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+        .score-girls { 
+            border-color: var(--neon-magenta); 
+            color: var(--neon-magenta); 
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+        }
+
+        /* Turn Indicator */
+        .turn-indicator {
+            width: 100%;
+            padding: 0.75rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            background: #000;
+            transition: all 0.3s;
+        }
+        .turn-boys { 
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3) inset;
+        }
+        .turn-girls { 
+            border: 2px solid var(--neon-magenta);
+            color: var(--neon-magenta);
+            text-shadow: 0 0 5px var(--neon-magenta);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3) inset;
+        }
+
+        /* Image/Icon Container - Perfectly Centered */
+        .image-container {
+            width: 100%;
+            height: 220px;
+            background: #000;
+            border: 2px dashed #444;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Centers vertically */
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.03) 2px,
+                rgba(255,255,255,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .image-container .emoji-fallback {
+            font-size: 8rem; /* Massive emoji size */
+            line-height: 1;
+            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.4)); /* Cyberpunk glow */
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        /* Multiple Choice Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        @media (min-width: 480px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #444;
+            color: var(--text-light);
+            padding: 0.75rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+        }
+
+        .option-btn:hover {
+            border-color: #777;
+            background: #111;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .option-btn.correct {
+            background: rgba(57, 255, 20, 0.1);
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3) inset;
+            opacity: 1;
+        }
+
+        .option-btn.wrong {
+            background: rgba(255, 0, 60, 0.1);
+            border: 2px solid var(--neon-red);
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red);
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.3) inset;
+            opacity: 1;
+        }
+
+        /* Feedback Overlay */
+        .feedback {
+            margin-top: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .next-btn {
+            display: none;
+            border-color: #fff;
+            margin-top: 1rem;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+        }
+        
+        .next-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-skip {
+            border-color: #555;
+            color: #888;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .btn-skip:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        /* Animations */
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .anim-correct { animation: glitch 0.3s ease; border-color: var(--neon-green) !important; }
+        .anim-wrong { animation: glitch 0.3s ease; border-color: var(--neon-red) !important; }
+        .anim-pop .emoji-fallback { animation: pop 0.4s ease; }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        
+        <div id="start-screen" class="screen active">
+            <h1>TRANSPORT<br>LINK</h1>
+            <p>SYSTEM INITIALIZED. AWAITING INPUT.</p>
+            <button class="btn btn-start" onclick="startGame()">INITIALIZE</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="header">
+                <div class="score-box score-boys">BOYS: <span id="score-boys">0</span></div>
+                <div class="score-box score-girls">GIRLS: <span id="score-girls">0</span></div>
+            </div>
+
+            <div id="turn-indicator" class="turn-indicator">BOYS' UPLINK</div>
+
+            <div class="image-container" id="image-container">
+                </div>
+
+            <div class="options-grid" id="options-grid">
+                </div>
+
+            <div class="feedback" id="feedback-area">
+                <div id="feedback-message"></div>
+                <button id="next-btn" class="btn next-btn" onclick="handleNextTurn()">NEXT SEQUENCE >></button>
+                <button id="skip-btn" class="btn btn-skip" onclick="handleSkipTurn()">SKIP >></button>
+            </div>
+        </div>
+
+        <div id="end-screen" class="screen">
+            <h1>SYSTEM HALTED</h1>
+            <div id="winner-announcement" style="font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 2rem;"></div>
+            <p>FINAL DATA LOG</p>
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; font-family: 'Orbitron'; font-size: 1.5rem;">
+                <span style="color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan);">BOYS: <span id="final-boys">0</span></span> | 
+                <span style="color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta);">GIRLS: <span id="final-girls">0</span></span>
+            </div>
+            <button class="btn btn-start" onclick="startGame()">REBOOT SYSTEM</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Cleaned up the data structure since we only need IDs, names, and emojis now!
+        const vocabulary = [
+            { id: 1, name: "Car (also called automobile)", emoji: "🚗" },
+            { id: 2, name: "Bus (or coach for long distances)", emoji: "🚌" },
+            { id: 3, name: "Truck (known as lorry in British English)", emoji: "🚚" },
+            { id: 4, name: "Van", emoji: "🚐" },
+            { id: 5, name: "Motorcycle (or motorbike)", emoji: "🏍️" },
+            { id: 6, name: "Bicycle (also called bike)", emoji: "🚲" },
+            { id: 7, name: "Taxi (or cab)", emoji: "🚕" },
+            { id: 8, name: "Scooter", emoji: "🛴🏍️" }, 
+            { id: 9, name: "Train", emoji: "🚆" },
+            { id: 10, name: "Tram (or streetcar)", emoji: "🚋" },
+            { id: 11, name: "Subway (also called underground or tube)", emoji: "🚇" },
+            { id: 12, name: "High-speed train", emoji: "🚅" },
+            { id: 13, name: "Ship", emoji: "🚢" },
+            { id: 14, name: "Boat", emoji: "⛵" },
+            { id: 15, name: "Ferry", emoji: "⛴️" },
+            { id: 16, name: "Submarine", emoji: "🛥️🌊" }, // Used two emojis to make it clear!
+            { id: 17, name: "Yacht", emoji: "🛥️" },
+            { id: 18, name: "Airplane (or aeroplane)", emoji: "✈️" },
+            { id: 19, name: "Helicopter", emoji: "🚁" },
+            { id: 20, name: "Hot air balloon", emoji: "🔥🎈" },
+            { id: 21, name: "Rickshaws", emoji: "🛺" }, 
+            { id: 22, name: "Velomobiles", emoji: "🚴" },
+            { id: 23, name: "Camel Bus", emoji: "🐪🚌" },
+            { id: 24, name: "Hovercraft", emoji: "🚤💨" },
+            { id: 25, name: "Songthaew", emoji: "🛻" },
+            { id: 26, name: "Suspended Monorail", emoji: "🚟" }
+        ];
+
+        // --- STATE VARIABLES ---
+        let scores = { boys: 0, girls: 0 };
+        let currentTeam = ''; 
+        let shuffledQuestions = [];
+        let currentQuestionIndex = 0;
+        let currentOptions = [];
+        let answered = false;
+
+        // --- UTILITY FUNCTIONS ---
+        const shuffleArray = (array) => {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        };
+
+        const switchScreen = (screenId) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        };
+
+        // --- CORE GAME LOGIC ---
+        const startGame = () => {
+            scores = { boys: 0, girls: 0 };
+            updateScoreUI();
+            
+            shuffledQuestions = shuffleArray(vocabulary);
+            currentQuestionIndex = 0;
+            
+            currentTeam = Math.random() < 0.5 ? 'boys' : 'girls';
+            
+            switchScreen('game-screen');
+            loadQuestion();
+        };
+
+        const loadQuestion = () => {
+            answered = false;
+            const question = shuffledQuestions[currentQuestionIndex];
+            
+            // Update Turn UI
+            const indicator = document.getElementById('turn-indicator');
+            indicator.textContent = currentTeam === 'boys' ? "BOYS' UPLINK" : "GIRLS' UPLINK";
+            indicator.className = `turn-indicator turn-${currentTeam}`;
+            
+            // Reset Feedback UI
+            document.getElementById('feedback-message').textContent = '';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('skip-btn').style.display = 'block';
+            
+            const imgContainer = document.getElementById('image-container');
+            imgContainer.classList.remove('anim-correct', 'anim-wrong', 'anim-pop');
+
+            // Render huge, centered emoji
+            imgContainer.innerHTML = `
+                <div class="emoji-fallback">${question.emoji}</div>
+            `;
+
+            // Generate Options (5 wrong + 1 correct = 6 options)
+            const wrongOptions = vocabulary.filter(v => v.id !== question.id);
+            const shuffledWrong = shuffleArray(wrongOptions).slice(0, 5);
+            currentOptions = shuffleArray([question, ...shuffledWrong]);
+
+            // Render Buttons
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            currentOptions.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.name;
+                btn.onclick = () => checkAnswer(opt, btn);
+                grid.appendChild(btn);
+            });
+        };
+
+        const checkAnswer = (selectedOption, buttonElement) => {
+            if (answered) return; 
+            answered = true;
+
+            const question = shuffledQuestions[currentQuestionIndex];
+            const isCorrect = selectedOption.id === question.id;
+            const msgArea = document.getElementById('feedback-message');
+            const imgContainer = document.getElementById('image-container');
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === question.name) {
+                    btn.classList.add('correct'); 
+                }
+            });
+
+            if (isCorrect) {
+                scores[currentTeam]++;
+                updateScoreUI();
+                buttonElement.classList.add('correct');
+                msgArea.innerHTML = `<span style="color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green);">DATA VERIFIED // +1</span>`;
+                imgContainer.classList.add('anim-correct', 'anim-pop');
+            } else {
+                buttonElement.classList.add('wrong');
+                msgArea.innerHTML = `<span style="color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red);">CORRUPTION // IT'S A ${question.name.toUpperCase()}</span>`;
+                imgContainer.classList.add('anim-wrong');
+            }
+
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('skip-btn').style.display = 'none';
+        };
+
+        const handleSkipTurn = () => {
+            if (answered) return;
+            currentTeam = currentTeam === 'boys' ? 'girls' : 'boys';
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                endGame();
+            } else {
+                loadQuestion();
+            }
+        };
+
+        const handleNextTurn = () => {
+            currentTeam = currentTeam === 'boys' ? 'girls' : 'boys';
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                endGame();
+            } else {
+                loadQuestion();
+            }
+        };
+
+        const updateScoreUI = () => {
+            document.getElementById('score-boys').textContent = scores.boys;
+            document.getElementById('score-girls').textContent = scores.girls;
+        };
+
+        const endGame = () => {
+            document.getElementById('final-boys').textContent = scores.boys;
+            document.getElementById('final-girls').textContent = scores.girls;
+            
+            const winnerAnnounce = document.getElementById('winner-announcement');
+            if (scores.boys > scores.girls) {
+                winnerAnnounce.innerHTML = `<span style="color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan);">BOYS DOMINATE</span>`;
+            } else if (scores.girls > scores.boys) {
+                winnerAnnounce.innerHTML = `<span style="color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta);">GIRLS DOMINATE</span>`;
+            } else {
+                winnerAnnounce.innerHTML = `<span style="color: #fff; text-shadow: 0 0 10px #fff;">STALEMATE</span>`;
+            }
+
+            switchScreen('end-screen');
+        };
+
+    </script>
+</body>
+</html>
