@@ -11,7 +11,7 @@
             --bg-base: #050505;
             --panel-bg: rgba(10, 10, 15, 0.85);
             --neon-cyan: #00f3ff;
-            --neon-magenta: #ff00dd;
+            --neon-magenta: #ff00ff;
             --neon-green: #39ff14;
             --neon-red: #ff003c;
             --text-light: #e0e0e0;
@@ -124,17 +124,18 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 70px;
+            min-width: 60px;
             background: rgba(0, 0, 0, 0.6);
             color: var(--text-light);
             border: 1px solid #444;
             padding: 8px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
         }
 
         .tab-btn:hover { background: #111; border-color: #777; }
@@ -367,6 +368,48 @@
             100% { box-shadow: inset 0 0 0px var(--neon-red); }
         }
 
+        /* Puzzle Game Styles */
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            width: 260px;
+            height: 260px;
+            background: #111;
+            border: 2px solid #444;
+            z-index: 10;
+        }
+
+        .puzzle-piece {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            background-color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .puzzle-piece:hover {
+            filter: brightness(1.2);
+        }
+
+        #boys .puzzle-piece.selected {
+            border: 2px solid var(--neon-cyan);
+            transform: scale(0.9);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            z-index: 2;
+        }
+
+        #girls .puzzle-piece.selected {
+            border: 2px solid var(--neon-magenta);
+            transform: scale(0.9);
+            box-shadow: 0 0 10px var(--neon-magenta);
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -381,32 +424,41 @@
     <script>
         // --- COMPREHENSIVE TRANSPORT DATA ---
         const TRANSPORT_DATA = [
-            { name: "Car", emoji: "🚗", hint: "A common road vehicle with four wheels." },
-            { name: "Bus", emoji: "🚌", hint: "A large vehicle that carries many passengers along a fixed route." },
-            { name: "Truck", emoji: "🚚", hint: "A large heavy vehicle used for carrying goods." },
-            { name: "Van", emoji: "🚐", hint: "A covered vehicle, usually smaller than a truck, used for transporting goods or people." },
-            { name: "Motorcycle", emoji: "🏍️", hint: "A fast, two-wheeled vehicle with an engine." },
-            { name: "Bicycle", emoji: "🚲", hint: "A vehicle with two wheels that you pedal yourself." },
-            { name: "Taxi", emoji: "🚕", hint: "A car you hire with a driver to take you somewhere." },
-            { name: "Scooter", emoji: "🛴", hint: "A small vehicle with two wheels, a flat step, and handlebars." }, 
-            { name: "Train", emoji: "🚆", hint: "A series of connected cars that run along a railway track." },
-            { name: "Tram", emoji: "🚋", hint: "A passenger vehicle running on rails in public city roads." },
-            { name: "Subway", emoji: "🚇", hint: "An underground railway system in a city." },
-            { name: "High speed train", emoji: "🚅", hint: "A passenger train designed to travel incredibly fast." },
-            { name: "Ship", emoji: "🚢", hint: "A large boat for transporting people or goods by sea." },
-            { name: "Boat", emoji: "⛵", hint: "A small vessel for travelling over water." },
-            { name: "Ferry", emoji: "⛴️", hint: "A boat or ship used to carry passengers and vehicles across a body of water." },
-            { name: "Submarine", emoji: "🛥️", hint: "A watercraft capable of independent operation underwater." },
-            { name: "Yacht", emoji: "🛥️", hint: "A medium-sized luxury sailboat equipped for cruising or racing." },
-            { name: "Airplane", emoji: "✈️", hint: "A flying vehicle with fixed wings and engines." },
-            { name: "Helicopter", emoji: "🚁", hint: "An aircraft with spinning blades on top." },
-            { name: "Hot air balloon", emoji: "🔥🎈", hint: "A large bag filled with hot air that rises into the sky." },
-            { name: "Rickshaw", emoji: "🛺", hint: "A light two-wheeled or three-wheeled passenger cart." }, 
-            { name: "Velomobile", emoji: "🚴🚗", hint: "A human-powered vehicle, enclosed for aerodynamic advantage." },
-            { name: "Camel Bus", emoji: "🐪🚌", hint: "A large passenger vehicle pulled by a desert animal." },
-            { name: "Hovercraft", emoji: "🚤", hint: "A vehicle that travels over land or water on a cushion of air." },
-            { name: "Songthaew", emoji: "🛻🚚", hint: "A passenger vehicle in Southeast Asia adapted from a pickup truck." },
-            { name: "Suspended Monorail", emoji: "🚟", hint: "A train that hangs from a single track above the ground." }
+            { id: 1, name: "Car", emoji: "🚗", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/c/c6/2013_Porsche_911_Carrera_4S_%28991%29_%289626546987%29.jpg", hint: "A common road vehicle with four wheels." },
+            { id: 2, name: "Bus", emoji: "🚌", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/5/5e/La_Ferri%C3%A8re_Airoux_86_Bus%26abri_bus_2014.jpg", hint: "A large vehicle that carries many passengers along a fixed route." },
+            { id: 3, name: "Truck", emoji: "🚚", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/a/ad/ATB_Truck_MAN.jpg", hint: "A large heavy vehicle used for carrying goods." },
+            { id: 4, name: "Van", emoji: "🚐", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/e/e3/LDV_Maxus_2.8_CDi_95_SWB_2005.jpg", hint: "A covered vehicle, usually smaller than a truck." },
+            { id: 5, name: "Motorcycle", emoji: "🏍️", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/b/be/2022-09-24_Motorsport%2C_IDM%2C_Finale_Hockenheimring_1DX_3890_by_Stepro.jpg", hint: "A fast, two-wheeled vehicle with an engine." },
+            { id: 6, name: "Bicycle", emoji: "🚲", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Raleigh_lady%27s_loop_frame_bicycle_1930s.jpg", hint: "A vehicle with two wheels that you pedal yourself." },
+            { id: 7, name: "Taxi", emoji: "🚕", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Ford_Crown_Victoria_taxicab_in_Washington%2C_DC.jpg", hint: "A car you hire with a driver to take you somewhere." },
+            { id: 8, name: "Scooter", emoji: "🛴", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/b/b5/Z%C3%BCndapp_Bella_R_154_%282008-05-21%29_Seitenansicht_ret.jpg", hint: "A small vehicle with two wheels, a flat step, and handlebars." }, 
+            { id: 9, name: "Train", emoji: "🚆", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/8/83/H%C5%BD_2044_between_Turcin_and_Sveti_Ilija.jpg", hint: "A series of connected cars that run along a railway track." },
+            { id: 10, name: "Tram", emoji: "🚋", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/0/02/C_Class_Tram%2C_Melbourne_-_Jan_2008.jpg", hint: "A passenger vehicle running on rails in public city roads." },
+            { id: 11, name: "Subway", emoji: "🚇", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/6/61/Munich_subway_station_Wettersteinplatz.JPG", hint: "An underground railway system in a city." },
+            { id: 12, name: "High speed train", emoji: "🚅", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/3/34/Belyi_Krechet_russian_high-speed_train_concept_01.jpg", hint: "A passenger train designed to travel incredibly fast." },
+            { id: 13, name: "Ship", emoji: "🚢", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/0/03/Rhapsody_%28ship%2C_1996%29%2C_S%C3%A8te_cf01.jpg", hint: "A large boat for transporting people or goods by sea." },
+            { id: 14, name: "Boat", emoji: "⛵", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Fishing_boat_N%C3%B8rre_Vorup%C3%B8r_2012-11-18_cropped.jpg", hint: "A small vessel for travelling over water." },
+            { id: 15, name: "Ferry", emoji: "⛴️", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/7/72/2023-05-01_ROPAX_ferry%2C_ISLE_OF_INNISFREE_-_IMO_8908466.jpg", hint: "A boat used to carry passengers and vehicles across water." },
+            { id: 16, name: "Submarine", emoji: "🛥️🌊", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/1/11/Submarine-912249_1280.jpg", hint: "A watercraft capable of independent operation underwater." },
+            { id: 17, name: "Yacht", emoji: "🛥️", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/5/55/A_MYA_Langkawi_Yacht_-_Seychelles_-_2025_-_10.jpg", hint: "A medium-sized luxury sailboat equipped for cruising." },
+            { id: 18, name: "Airplane", emoji: "✈️", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Aeroflot_Airbus_A330_Kustov.jpg", hint: "A flying vehicle with fixed wings and engines." },
+            { id: 19, name: "Helicopter", emoji: "🚁", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Helicopter_rescue_sancy_takeoff.jpg", hint: "An aircraft with spinning blades on top." },
+            { id: 20, name: "Hot air balloon", emoji: "🔥🎈", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Colorado_Springs_Hot_Air_Balloon_Competition.jpg", hint: "A large bag filled with hot air that rises into the sky." },
+            { id: 21, name: "Rickshaws", emoji: "🛺", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Cycle_rickshaws%2C_Puri.jpg", hint: "A light two-wheeled or three-wheeled passenger cart." }, 
+            { id: 22, name: "Velomobiles", emoji: "🚴", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sunrider%2C_Oxie%2C_Malm%C3%B6%2C_Sweden.jpg", hint: "A human-powered vehicle, enclosed for aerodynamics." },
+            { id: 23, name: "Camel Bus", emoji: "🐪🚌", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Camel_bus_in_Havana.jpg", hint: "A large passenger vehicle pulled by a desert animal." },
+            { id: 24, name: "Hovercraft", emoji: "🚤💨", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Hovercraft_off_Ryde_Pier_05.jpg", hint: "A vehicle that travels on a cushion of air." },
+            { id: 25, name: "Songthaew", emoji: "🛻", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Songthaew_Isuzu_6006_6006-3.jpg", hint: "A passenger vehicle in SE Asia adapted from a pickup truck." },
+            { id: 26, name: "Suspended Monorail", emoji: "🚟", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Optics_Valley_Suspended_Monorail_%287%29.jpg", hint: "A train that hangs from a single track above the ground." },
+            { id: 27, name: "Cable Car", emoji: "🚠", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/d/d4/San_Francisco_%28CA%2C_USA%29%2C_Powell-Mason_Cable_Car_Turnaround_--_2022_--_2975.jpg", hint: "A vehicle that hangs from and is pulled by a moving cable." },
+            { id: 28, name: "Gondola Lift", emoji: "🚡", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Gondola_lift_in_Krasnaya_Polyana.JPG", hint: "A ski lift with enclosed cabins." },
+            { id: 29, name: "Funicular", emoji: "🚞", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/4/48/Tbilisi_Funicular%2C_Georgia_%2850494491213%29.jpg", hint: "A cable railway on a steep incline." },
+            { id: 30, name: "Pedicab", emoji: "🚲🛺", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/0/03/Bangladeshi_style_Rickshaw.jpg", hint: "A cycle rickshaw." },
+            { id: 31, name: "Trolleybus", emoji: "🚎", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Trolleybus_TrolZa-5275%2707_in_Yaroslavl_01.jpg", hint: "An electric bus that draws power from overhead wires." },
+            { id: 32, name: "Segway", emoji: "🛴𖣐", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/2/29/A_pair_of_Segways_-_geograph.org.uk_-_3007213.jpg", hint: "A two-wheeled, self-balancing personal transporter." },
+            { id: 33, name: "Electric Scooter", emoji: "🛴⚡", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/b/b5/E-Scooter_Hermannstrasse.jpg", hint: "A scooter powered by an electric motor." },
+            { id: 34, name: "Electric Bike", emoji: "🚲⚡", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/2/2d/LACMTA_Bike_Share_electric_bicycle_-_non-drive_side.jpg", hint: "A bicycle with an integrated electric motor." },
+            { id: 35, name: "Electric Car", emoji: "🚗⚡", imgsrc: "https://upload.wikimedia.org/wikipedia/commons/a/a0/%D0%9C%D0%B5%D0%B4%D0%B5%D0%BE%2C_%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D0%B8_%D0%BD%D0%B0_%D0%BF%D0%BB%D0%BE%D1%82%D0%B8%D0%BD%D0%B5.jpg", hint: "An automobile propelled by one or more electric motors." }
         ];
 
         // --- AUDIO SYNTHESIS ---
@@ -465,7 +517,7 @@
                     <button class="tab-btn" data-level="3">Decrypt</button>
                     <button class="tab-btn" data-level="4">Memory</button>
                     <button class="tab-btn" data-level="5">Catch It</button>
-                </div>
+                    <button class="tab-btn" data-level="6">Puzzle</button> </div>
 
                 <div class="game-area"></div>
                 <div style="text-align: center; margin-top: 10px;">
@@ -543,7 +595,7 @@
                 area.querySelector("#next-btn").onclick = () => {
                     level++;
                     wordsCompleted = 0;
-                    if (level > 5) {
+                    if (level > 6) {
                         area.innerHTML = `<h2 style="color:var(--neon-red); z-index:10;">SYSTEM HALTED</h2><h3 style="color:var(--neon-green); z-index:10;">FINAL SCORE: ${score}</h3><br><p style="z-index:10;">Select a protocol above to restart.</p>`;
                     } else {
                         loadCurrentLevelGame();
@@ -558,6 +610,7 @@
                 else if(level === 3) level3();
                 else if(level === 4) level4();
                 else if(level === 5) level5();
+                else if(level === 6) level6(); // NEW LEVEL FUNCTION
             }
 
             function renderProgress() {
@@ -799,6 +852,96 @@
                 }, 1000);
             }
 
+           // --- LEVEL 6: Image Puzzle (Mobile-Friendly Tap-to-Swap) ---
+            function level6() {
+                const item = TRANSPORT_DATA[Math.random() * TRANSPORT_DATA.length | 0];
+                const gridSize = 3; // 3x3 Grid
+                
+                area.innerHTML = `
+                    ${renderProgress()}
+                    <h3 style="margin-bottom: 5px;">RECONSTRUCT IMAGE</h3>
+                    <p style="font-family: 'Orbitron'; font-size: 0.8rem; color: #aaa; margin-bottom: 10px; z-index:10;">TAP ONE PIECE, THEN TAP ANOTHER TO SWAP.</p>
+                    <div class="puzzle-grid"></div>
+                `;
+
+                const puzzleGrid = area.querySelector('.puzzle-grid');
+                let pieces = [];
+                let selectedPiece = null;
+
+                // Create the 9 pieces
+                for (let i = 0; i < gridSize * gridSize; i++) {
+                    let piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.dataset.correctIndex = i; // Store correct order
+                    
+                    // Calculate background position to slice the image
+                    let xPercent = (i % gridSize) * (100 / (gridSize - 1));
+                    let yPercent = Math.floor(i / gridSize) * (100 / (gridSize - 1));
+                    
+                    piece.style.backgroundImage = `url('${item.imgsrc}')`;
+                    
+                    // THE FIX: Force both width and height to scale exactly to the grid
+                    piece.style.backgroundSize = `${gridSize * 100}% ${gridSize * 100}%`; 
+                    piece.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+                    
+                    pieces.push(piece);
+                }
+
+                // Shuffle pieces
+                pieces = shuffle(pieces);
+
+                // Add to DOM and setup Tap-to-Swap logic
+                pieces.forEach((piece) => {
+                    puzzleGrid.appendChild(piece);
+                    
+                    piece.onclick = () => {
+                        if (!selectedPiece) {
+                            // First tap: Select piece
+                            selectedPiece = piece;
+                            piece.classList.add('selected');
+                        } else if (selectedPiece === piece) {
+                            // Tap same piece: Deselect
+                            selectedPiece.classList.remove('selected');
+                            selectedPiece = null;
+                        } else {
+                            // Second tap: Swap pieces in the DOM
+                            let temp = document.createElement('div');
+                            puzzleGrid.insertBefore(temp, piece);
+                            puzzleGrid.insertBefore(piece, selectedPiece);
+                            puzzleGrid.insertBefore(selectedPiece, temp);
+                            temp.remove();
+
+                            // Deselect
+                            selectedPiece.classList.remove('selected');
+                            selectedPiece = null;
+
+                            // Check if solved
+                            checkPuzzleComplete();
+                        }
+                    };
+                });
+
+                function checkPuzzleComplete() {
+                    let currentPieces = puzzleGrid.querySelectorAll('.puzzle-piece');
+                    let isSolved = true;
+                    
+                    currentPieces.forEach((p, index) => {
+                        if (parseInt(p.dataset.correctIndex) !== index) {
+                            isSolved = false;
+                        }
+                    });
+
+                    if (isSolved) {
+                        // Disable clicks
+                        currentPieces.forEach(p => p.onclick = null);
+                        // Add flash animation to the whole grid
+                        puzzleGrid.style.border = '2px solid var(--neon-green)';
+                        puzzleGrid.style.boxShadow = '0 0 20px var(--neon-green)';
+                        
+                        setTimeout(() => handleCorrect(), 800);
+                    }
+                }
+            }
             container.querySelector(".restart").onclick = () => {
                 clearFallingItems();
                 score = 0; level = 1; wordsCompleted = 0;
