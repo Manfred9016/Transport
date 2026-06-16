@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEON TRANSPORT - Cyberpunk ESL Game</title>
+    <title>NEON TRANSPORT INTERACTIVE - ESL Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -11,7 +11,7 @@
             --bg-base: #050505;
             --panel-bg: rgba(10, 10, 15, 0.85);
             --neon-cyan: #00f3ff;
-            --neon-magenta: #ff00ff;
+            --neon-magenta: #ff00dd;
             --neon-green: #39ff14;
             --neon-red: #ff003c;
             --text-light: #e0e0e0;
@@ -35,166 +35,140 @@
             color: var(--text-light);
             font-family: 'Rajdhani', sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             padding: 1rem;
         }
 
-        /* Cyberpunk Container */
-        .game-container {
-            width: 100%;
-            max-width: 600px;
-            background: var(--panel-bg);
-            border: 2px solid #333;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(5px);
-        }
-
-        /* Neon Borders for Container */
-        .game-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-        }
-
-        .screen {
-            display: none;
-            padding: 2.5rem 1.5rem;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* Typography */
         h1 {
             font-family: 'Orbitron', sans-serif;
             font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
             color: #fff;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+            text-align: center;
         }
-        
-        p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            color: #aaa;
+
+        h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Buttons */
-        .btn {
-            font-family: 'Orbitron', sans-serif;
-            background: transparent;
-            color: var(--text-light);
-            border: 2px solid var(--text-light);
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        /* Layout for two teams */
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
             width: 100%;
-            max-width: 300px;
+            max-width: 1200px;
+        }
+
+        @media(min-width: 800px) {
+            .game-wrapper {
+                flex-direction: row;
+            }
+        }
+
+        /* Cyberpunk Containers */
+        .team-container {
+            flex: 1;
+            background: var(--panel-bg);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
             position: relative;
-            overflow: hidden;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
         }
 
-        .btn:active {
-            transform: scale(0.95);
-        }
+        /* Team Specific Styling */
+        #boys { box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); }
+        #girls { box-shadow: 0 0 20px rgba(255, 0, 255, 0.1); }
 
-        .btn-start { 
-            border-color: var(--neon-green); 
-            color: var(--neon-green);
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2) inset;
+        /* Neon Top Borders */
+        #boys::before, #girls::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
         }
-        
-        .btn-start:hover {
-            background: var(--neon-green);
-            color: #000;
-            box-shadow: 0 0 20px var(--neon-green);
-        }
+        #boys::before { background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent); }
+        #girls::before { background: linear-gradient(90deg, transparent, var(--neon-magenta), transparent); }
 
-        /* Header / Scores */
         .header {
-            width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
+            align-items: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
         }
 
-        .score-box {
-            padding: 0.5rem 1rem;
-            border: 1px solid #333;
-            background: #000;
-        }
+        #boys .header h2 { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0,243,255,0.5); }
+        #girls .header h2 { color: var(--neon-magenta); text-shadow: 0 0 10px rgba(255,0,255,0.5); }
         
-        .score-boys { 
+        .header div { font-family: 'Orbitron', sans-serif; }
+        #boys .score { color: var(--neon-cyan); }
+        #girls .score { color: var(--neon-magenta); }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 70px;
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--text-light);
+            border: 1px solid #444;
+            padding: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { background: #111; border-color: #777; }
+        
+        #boys .tab-btn.active { 
             border-color: var(--neon-cyan); 
             color: var(--neon-cyan); 
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset; 
         }
-        .score-girls { 
+        #girls .tab-btn.active { 
             border-color: var(--neon-magenta); 
             color: var(--neon-magenta); 
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2) inset; 
         }
 
-        /* Turn Indicator */
-        .turn-indicator {
-            width: 100%;
-            padding: 0.75rem;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 1.5rem;
-            background: #000;
-            transition: all 0.3s;
-        }
-        .turn-boys { 
-            border: 2px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            text-shadow: 0 0 5px var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3) inset;
-        }
-        .turn-girls { 
-            border: 2px solid var(--neon-magenta);
-            color: var(--neon-magenta);
-            text-shadow: 0 0 5px var(--neon-magenta);
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3) inset;
-        }
-
-        /* Image/Icon Container - Perfectly Centered */
-        .image-container {
-            width: 100%;
-            height: 220px;
+        /* Game Area */
+        .game-area {
+            flex-grow: 1;
             background: #000;
             border: 2px dashed #444;
-            display: flex;
-            justify-content: center;
-            align-items: center; /* Centers vertically */
-            margin-bottom: 1.5rem;
+            padding: 20px;
+            text-align: center;
             position: relative;
             overflow: hidden;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
         }
 
-        .image-container::after {
+        /* Scanline Overlay */
+        .game-area::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -202,378 +176,642 @@
                 0deg,
                 transparent,
                 transparent 2px,
-                rgba(255,255,255,0.03) 2px,
-                rgba(255,255,255,0.03) 4px
+                rgba(255,255,255,0.02) 2px,
+                rgba(255,255,255,0.02) 4px
             );
             pointer-events: none;
-            z-index: 3;
+            z-index: 5;
         }
 
-        .image-container .emoji-fallback {
-            font-size: 8rem; /* Massive emoji size */
-            line-height: 1;
-            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.4)); /* Cyberpunk glow */
-            z-index: 1;
-            transition: transform 0.3s ease;
+        .progress-text {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #777;
+            z-index: 10;
         }
 
-        /* Multiple Choice Grid */
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
+        h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: #fff;
+            z-index: 10;
+        }
+
+        /* Terminal Style Hint */
+        .hint-text {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 10px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            color: var(--neon-cyan);
             width: 100%;
+            z-index: 10;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
         }
 
-        @media (min-width: 480px) {
-            .options-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        #girls .hint-text {
+            background: rgba(255, 0, 255, 0.05);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            color: var(--neon-magenta);
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
         }
 
-        .option-btn {
+        .word {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 10;
+        }
+
+        .big-emoji {
+            font-size: 6rem;
+            line-height: 1;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+            z-index: 10;
+        }
+
+        /* Cyberpunk Input */
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-bottom: 2px solid #555;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+            z-index: 10;
+            position: relative;
+        }
+
+        #boys input[type="text"]:focus { border-bottom-color: var(--neon-cyan); box-shadow: 0 10px 10px -10px var(--neon-cyan); }
+        #girls input[type="text"]:focus { border-bottom-color: var(--neon-magenta); box-shadow: 0 10px 10px -10px var(--neon-magenta); }
+
+        /* Buttons */
+        .action-btn {
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid #444;
             color: var(--text-light);
-            padding: 0.75rem;
+            padding: 12px 20px;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            min-height: 70px;
+            text-transform: uppercase;
+            width: 100%;
+            max-width: 250px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .action-btn:hover { border-color: #777; background: #111; }
+        .action-btn:active { transform: scale(0.95); }
+        .action-btn.correct { border-color: var(--neon-green); color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
+        .action-btn.wrong { border-color: var(--neon-red); color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red); }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            z-index: 10;
+        }
+
+        /* Memory Game */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            width: 100%;
+            max-width: 400px;
+            z-index: 10;
+        }
+
+        .memory-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            aspect-ratio: 1 / 1;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+        }
+
+        .memory-card .emoji { opacity: 0; transition: opacity 0.2s; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+        
+        #boys .memory-card.flipped { background: rgba(0, 243, 255, 0.1); border-color: var(--neon-cyan); transform: scale(1.05); }
+        #girls .memory-card.flipped { background: rgba(255, 0, 255, 0.1); border-color: var(--neon-magenta); transform: scale(1.05); }
+        
+        .memory-card.flipped .emoji { opacity: 1; }
+        .memory-card.matched { background: rgba(57, 255, 20, 0.2) !important; border-color: var(--neon-green) !important; }
+        .memory-card.matched .emoji { opacity: 1; }
+
+        /* Catch It Game */
+        .falling {
+            position: absolute;
+            top: -50px;
+            background: #000;
+            color: white;
+            padding: 8px 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #777;
+            animation: fall linear forwards;
+            z-index: 20;
+            white-space: nowrap;
             text-transform: uppercase;
         }
-
-        .option-btn:hover {
-            border-color: #777;
-            background: #111;
-        }
-
-        .option-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .option-btn.correct {
-            background: rgba(57, 255, 20, 0.1);
-            border: 2px solid var(--neon-green);
-            color: var(--neon-green);
-            text-shadow: 0 0 5px var(--neon-green);
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.3) inset;
-            opacity: 1;
-        }
-
-        .option-btn.wrong {
-            background: rgba(255, 0, 60, 0.1);
-            border: 2px solid var(--neon-red);
-            color: var(--neon-red);
-            text-shadow: 0 0 5px var(--neon-red);
-            box-shadow: 0 0 15px rgba(255, 0, 60, 0.3) inset;
-            opacity: 1;
-        }
-
-        /* Feedback Overlay */
-        .feedback {
-            margin-top: 1.5rem;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
-            font-weight: bold;
-            min-height: 70px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .next-btn {
-            display: none;
-            border-color: #fff;
-            margin-top: 1rem;
-            font-size: 1rem;
-            padding: 0.75rem 1.5rem;
-        }
         
-        .next-btn:hover {
-            background: #fff;
-            color: #000;
-        }
-
-        .btn-skip {
-            border-color: #555;
-            color: #888;
-            margin-top: 0.5rem;
-            font-size: 1rem;
-            padding: 0.5rem 1.5rem;
-        }
-
-        .btn-skip:hover {
-            background: #333;
-            color: #fff;
-        }
-
-        /* Animations */
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
-        }
+        #boys .falling { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,243,255,0.3) inset; }
+        #girls .falling { border-color: var(--neon-magenta); box-shadow: 0 0 10px rgba(255,0,255,0.3) inset; }
         
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .falling:hover { background: #222; transform: scale(1.1); }
+
+        @keyframes fall {
+            0% { top: -50px; }
+            100% { top: 110%; }
         }
 
-        .anim-correct { animation: glitch 0.3s ease; border-color: var(--neon-green) !important; }
-        .anim-wrong { animation: glitch 0.3s ease; border-color: var(--neon-red) !important; }
-        .anim-pop .emoji-fallback { animation: pop 0.4s ease; }
+        /* Glitch/Neon Animations */
+        @keyframes flashCorrect {
+            0% { box-shadow: inset 0 0 0px var(--neon-green); }
+            50% { box-shadow: inset 0 0 50px var(--neon-green); }
+            100% { box-shadow: inset 0 0 0px var(--neon-green); }
+        }
+
+        @keyframes flashWrong {
+            0% { box-shadow: inset 0 0 0px var(--neon-red); }
+            50% { box-shadow: inset 0 0 50px var(--neon-red); }
+            100% { box-shadow: inset 0 0 0px var(--neon-red); }
+        }
 
     </style>
 </head>
 <body>
 
-    <div class="game-container">
-        
-        <div id="start-screen" class="screen active">
-            <h1>TRANSPORT<br>LINK</h1>
-            <p>SYSTEM INITIALIZED. AWAITING INPUT.</p>
-            <button class="btn btn-start" onclick="startGame()">INITIALIZE</button>
-        </div>
+    <h1>TRANSPORT UPLINK</h1>
 
-        <div id="game-screen" class="screen">
-            <div class="header">
-                <div class="score-box score-boys">BOYS: <span id="score-boys">0</span></div>
-                <div class="score-box score-girls">GIRLS: <span id="score-girls">0</span></div>
-            </div>
-
-            <div id="turn-indicator" class="turn-indicator">BOYS' UPLINK</div>
-
-            <div class="image-container" id="image-container">
-                </div>
-
-            <div class="options-grid" id="options-grid">
-                </div>
-
-            <div class="feedback" id="feedback-area">
-                <div id="feedback-message"></div>
-                <button id="next-btn" class="btn next-btn" onclick="handleNextTurn()">NEXT SEQUENCE >></button>
-                <button id="skip-btn" class="btn btn-skip" onclick="handleSkipTurn()">SKIP >></button>
-            </div>
-        </div>
-
-        <div id="end-screen" class="screen">
-            <h1>SYSTEM HALTED</h1>
-            <div id="winner-announcement" style="font-family: 'Orbitron'; font-size: 2rem; margin-bottom: 2rem;"></div>
-            <p>FINAL DATA LOG</p>
-            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; font-family: 'Orbitron'; font-size: 1.5rem;">
-                <span style="color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan);">BOYS: <span id="final-boys">0</span></span> | 
-                <span style="color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta);">GIRLS: <span id="final-girls">0</span></span>
-            </div>
-            <button class="btn btn-start" onclick="startGame()">REBOOT SYSTEM</button>
-        </div>
-
+    <div class="game-wrapper">
+        <div id="boys" class="team-container"></div>
+        <div id="girls" class="team-container"></div>
     </div>
 
     <script>
-        // Cleaned up the data structure since we only need IDs, names, and emojis now!
-        const vocabulary = [
-            { id: 1, name: "Car (also called automobile)", emoji: "🚗" },
-            { id: 2, name: "Bus (or coach for long distances)", emoji: "🚌" },
-            { id: 3, name: "Truck (known as lorry in British English)", emoji: "🚚" },
-            { id: 4, name: "Van", emoji: "🚐" },
-            { id: 5, name: "Motorcycle (or motorbike)", emoji: "🏍️" },
-            { id: 6, name: "Bicycle (also called bike)", emoji: "🚲" },
-            { id: 7, name: "Taxi (or cab)", emoji: "🚕" },
-            { id: 8, name: "Scooter", emoji: "🛴🏍️" }, 
-            { id: 9, name: "Train", emoji: "🚆" },
-            { id: 10, name: "Tram (or streetcar)", emoji: "🚋" },
-            { id: 11, name: "Subway (also called underground or tube)", emoji: "🚇" },
-            { id: 12, name: "High-speed train", emoji: "🚅" },
-            { id: 13, name: "Ship", emoji: "🚢" },
-            { id: 14, name: "Boat", emoji: "⛵" },
-            { id: 15, name: "Ferry", emoji: "⛴️" },
-            { id: 16, name: "Submarine", emoji: "🛥️🌊" }, // Used two emojis to make it clear!
-            { id: 17, name: "Yacht", emoji: "🛥️" },
-            { id: 18, name: "Airplane (or aeroplane)", emoji: "✈️" },
-            { id: 19, name: "Helicopter", emoji: "🚁" },
-            { id: 20, name: "Hot air balloon", emoji: "🔥🎈" },
-            { id: 21, name: "Rickshaws", emoji: "🛺" }, 
-            { id: 22, name: "Velomobiles", emoji: "🚴" },
-            { id: 23, name: "Camel Bus", emoji: "🐪🚌" },
-            { id: 24, name: "Hovercraft", emoji: "🚤💨" },
-            { id: 25, name: "Songthaew", emoji: "🛻" },
-            { id: 26, name: "Suspended Monorail", emoji: "🚟" },
-            { id: 27, name: "Cable Car", emoji: "🚠" },
-            { id: 28, name: "Gondola Lift", emoji: "🚡" },
-            { id: 29, name: "Funicular", emoji: "🚞" },
-            { id: 30, name: "Pedicab (or cycle rickshaw)", emoji: "🚲🛺" },
-            { id: 31, name: "Trolleybus", emoji: "🚎" },
-            { id: 32, name: "Segway", emoji: "🛴𖣐⚡️" },
-            { id: 33, name: "Electric Scooter", emoji: "🛴⚡️" },
-            { id: 34, name: "Electric Bike (E-bike)", emoji: "🚲⚡" },
-            { id: 35, name: "Electric Car", emoji: "🚗⚡" },
+        // --- COMPREHENSIVE TRANSPORT DATA ---
+        const TRANSPORT_DATA = [
+            { name: "Car", emoji: "🚗", hint: "A common road vehicle with four wheels." },
+            { name: "Bus", emoji: "🚌", hint: "A large vehicle that carries many passengers along a fixed route." },
+            { name: "Truck", emoji: "🚚", hint: "A large heavy vehicle used for carrying goods." },
+            { name: "Van", emoji: "🚐", hint: "A covered vehicle, usually smaller than a truck, used for transporting goods or people." },
+            { name: "Motorcycle", emoji: "🏍️", hint: "A fast, two-wheeled vehicle with an engine." },
+            { name: "Bicycle", emoji: "🚲", hint: "A vehicle with two wheels that you pedal yourself." },
+            { name: "Taxi", emoji: "🚕", hint: "A car you hire with a driver to take you somewhere." },
+            { name: "Scooter", emoji: "🛴", hint: "A small vehicle with two wheels, a flat step, and handlebars." }, 
+            { name: "Train", emoji: "🚆", hint: "A series of connected cars that run along a railway track." },
+            { name: "Tram", emoji: "🚋", hint: "A passenger vehicle running on rails in public city roads." },
+            { name: "Subway", emoji: "🚇", hint: "An underground railway system in a city." },
+            { name: "High speed train", emoji: "🚅", hint: "A passenger train designed to travel incredibly fast." },
+            { name: "Ship", emoji: "🚢", hint: "A large boat for transporting people or goods by sea." },
+            { name: "Boat", emoji: "⛵", hint: "A small vessel for travelling over water." },
+            { name: "Ferry", emoji: "⛴️", hint: "A boat or ship used to carry passengers and vehicles across a body of water." },
+            { name: "Submarine", emoji: "🛥️", hint: "A watercraft capable of independent operation underwater." },
+            { name: "Yacht", emoji: "🛥️", hint: "A medium-sized luxury sailboat equipped for cruising or racing." },
+            { name: "Airplane", emoji: "✈️", hint: "A flying vehicle with fixed wings and engines." },
+            { name: "Helicopter", emoji: "🚁", hint: "An aircraft with spinning blades on top." },
+            { name: "Hot air balloon", emoji: "🔥🎈", hint: "A large bag filled with hot air that rises into the sky." },
+            { name: "Rickshaw", emoji: "🛺", hint: "A light two-wheeled or three-wheeled passenger cart." }, 
+            { name: "Velomobile", emoji: "🚴🚗", hint: "A human-powered vehicle, enclosed for aerodynamic advantage." },
+            { name: "Camel Bus", emoji: "🐪🚌", hint: "A large passenger vehicle pulled by a desert animal." },
+            { name: "Hovercraft", emoji: "🚤", hint: "A vehicle that travels over land or water on a cushion of air." },
+            { name: "Songthaew", emoji: "🛻🚚", hint: "A passenger vehicle in Southeast Asia adapted from a pickup truck." },
+            { name: "Suspended Monorail", emoji: "🚟", hint: "A train that hangs from a single track above the ground." }
         ];
 
-        // --- STATE VARIABLES ---
-        let scores = { boys: 0, girls: 0 };
-        let currentTeam = ''; 
-        let shuffledQuestions = [];
-        let currentQuestionIndex = 0;
-        let currentOptions = [];
-        let answered = false;
-
-        // --- UTILITY FUNCTIONS ---
-        const shuffleArray = (array) => {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+        // --- AUDIO SYNTHESIS ---
+        function playSound(type) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            if (type === "correct") {
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } else if (type === "wrong") {
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(200, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } else if (type === "levelUp") {
+                osc.type = "square";
+                osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.setValueAtTime(600, ctx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, ctx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.2, ctx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.4);
             }
-            return arr;
-        };
+        }
 
-        const switchScreen = (screenId) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        };
+        // --- UTILITY ---
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
 
-        // --- CORE GAME LOGIC ---
-        const startGame = () => {
-            scores = { boys: 0, girls: 0 };
-            updateScoreUI();
-            
-            shuffledQuestions = shuffleArray(vocabulary);
-            currentQuestionIndex = 0;
-            
-            currentTeam = Math.random() < 0.5 ? 'boys' : 'girls';
-            
-            switchScreen('game-screen');
-            loadQuestion();
-        };
+        // --- GAME FACTORY FUNCTION ---
+        function createTeam(container, name) {
+            container.innerHTML = `
+                <div class="header">
+                    <h2>${name}</h2>
+                    <div>SCORE: <span class="score">0</span></div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab-btn" data-level="1">Unjumble</button>
+                    <button class="tab-btn" data-level="2">Emojis</button>
+                    <button class="tab-btn" data-level="3">Decrypt</button>
+                    <button class="tab-btn" data-level="4">Memory</button>
+                    <button class="tab-btn" data-level="5">Catch It</button>
+                </div>
 
-        const loadQuestion = () => {
-            answered = false;
-            const question = shuffledQuestions[currentQuestionIndex];
-            
-            // Update Turn UI
-            const indicator = document.getElementById('turn-indicator');
-            indicator.textContent = currentTeam === 'boys' ? "BOYS' UPLINK" : "GIRLS' UPLINK";
-            indicator.className = `turn-indicator turn-${currentTeam}`;
-            
-            // Reset Feedback UI
-            document.getElementById('feedback-message').textContent = '';
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('skip-btn').style.display = 'block';
-            
-            const imgContainer = document.getElementById('image-container');
-            imgContainer.classList.remove('anim-correct', 'anim-wrong', 'anim-pop');
-
-            // Render huge, centered emoji
-            imgContainer.innerHTML = `
-                <div class="emoji-fallback">${question.emoji}</div>
+                <div class="game-area"></div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button class="action-btn restart" style="width: auto; padding: 10px 20px; font-size: 0.9rem; font-family: 'Orbitron';">REBOOT SCORE</button>
+                </div>
             `;
 
-            // Generate Options (5 wrong + 1 correct = 6 options)
-            const wrongOptions = vocabulary.filter(v => v.id !== question.id);
-            const shuffledWrong = shuffleArray(wrongOptions).slice(0, 5);
-            currentOptions = shuffleArray([question, ...shuffledWrong]);
-
-            // Render Buttons
-            const grid = document.getElementById('options-grid');
-            grid.innerHTML = '';
+            let score = 0, level = 1, wordsCompleted = 0;
+            const WORDS_PER_LEVEL = 10; 
             
-            currentOptions.forEach((opt) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.textContent = opt.name;
-                btn.onclick = () => checkAnswer(opt, btn);
-                grid.appendChild(btn);
+            const scoreEl = container.querySelector(".score");
+            const area = container.querySelector(".game-area");
+            const tabBtns = container.querySelectorAll(".tab-btn");
+
+            // Handle Tab Clicks
+            tabBtns.forEach(btn => {
+                btn.onclick = () => {
+                    clearFallingItems();
+                    level = parseInt(btn.dataset.level);
+                    wordsCompleted = 0; 
+                    loadCurrentLevelGame();
+                };
             });
-        };
 
-        const checkAnswer = (selectedOption, buttonElement) => {
-            if (answered) return; 
-            answered = true;
+            function clearFallingItems() {
+                if(container.spawnInterval) clearInterval(container.spawnInterval);
+                area.querySelectorAll('.falling').forEach(el => el.remove());
+            }
 
-            const question = shuffledQuestions[currentQuestionIndex];
-            const isCorrect = selectedOption.id === question.id;
-            const msgArea = document.getElementById('feedback-message');
-            const imgContainer = document.getElementById('image-container');
+            function updateActiveTab() {
+                tabBtns.forEach(b => {
+                    if (parseInt(b.dataset.level) === level) b.classList.add("active");
+                    else b.classList.remove("active");
+                });
+            }
 
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.disabled = true;
-                if (btn.textContent === question.name) {
-                    btn.classList.add('correct'); 
+            function updateScore(val) {
+                score += val;
+                scoreEl.textContent = score;
+            }
+
+            function triggerAnimation(type) {
+                area.style.animation = "none";
+                void area.offsetWidth; 
+                area.style.animation = type === 'correct' ? "flashCorrect 0.4s" : "flashWrong 0.4s";
+            }
+
+            function handleCorrect(preventReload = false) {
+                playSound("correct");
+                triggerAnimation('correct');
+                updateScore(10);
+                wordsCompleted++;
+
+                if (wordsCompleted >= WORDS_PER_LEVEL) {
+                    playSound("levelUp");
+                    showNextLevelButton();
+                } else if (!preventReload) {
+                    loadCurrentLevelGame(); 
                 }
-            });
-
-            if (isCorrect) {
-                scores[currentTeam]++;
-                updateScoreUI();
-                buttonElement.classList.add('correct');
-                msgArea.innerHTML = `<span style="color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green);">DATA VERIFIED // +1</span>`;
-                imgContainer.classList.add('anim-correct', 'anim-pop');
-            } else {
-                buttonElement.classList.add('wrong');
-                msgArea.innerHTML = `<span style="color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red);">CORRUPTION // IT'S A ${question.name.toUpperCase()}</span>`;
-                imgContainer.classList.add('anim-wrong');
             }
 
-            document.getElementById('next-btn').style.display = 'block';
-            document.getElementById('skip-btn').style.display = 'none';
-        };
-
-        const handleSkipTurn = () => {
-            if (answered) return;
-            currentTeam = currentTeam === 'boys' ? 'girls' : 'boys';
-            currentQuestionIndex++;
-            
-            if (currentQuestionIndex >= shuffledQuestions.length) {
-                endGame();
-            } else {
-                loadQuestion();
-            }
-        };
-
-        const handleNextTurn = () => {
-            currentTeam = currentTeam === 'boys' ? 'girls' : 'boys';
-            currentQuestionIndex++;
-            
-            if (currentQuestionIndex >= shuffledQuestions.length) {
-                endGame();
-            } else {
-                loadQuestion();
-            }
-        };
-
-        const updateScoreUI = () => {
-            document.getElementById('score-boys').textContent = scores.boys;
-            document.getElementById('score-girls').textContent = scores.girls;
-        };
-
-        const endGame = () => {
-            document.getElementById('final-boys').textContent = scores.boys;
-            document.getElementById('final-girls').textContent = scores.girls;
-            
-            const winnerAnnounce = document.getElementById('winner-announcement');
-            if (scores.boys > scores.girls) {
-                winnerAnnounce.innerHTML = `<span style="color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan);">BOYS DOMINATE</span>`;
-            } else if (scores.girls > scores.boys) {
-                winnerAnnounce.innerHTML = `<span style="color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta);">GIRLS DOMINATE</span>`;
-            } else {
-                winnerAnnounce.innerHTML = `<span style="color: #fff; text-shadow: 0 0 10px #fff;">STALEMATE</span>`;
+            function handleWrong() {
+                playSound("wrong");
+                triggerAnimation('wrong');
+                updateScore(-5);
             }
 
-            switchScreen('end-screen');
-        };
+            function showNextLevelButton() {
+                clearFallingItems();
+                area.innerHTML = `
+                    <h2 style="color:var(--neon-green); text-shadow:0 0 10px var(--neon-green); z-index:10;">LEVEL ${level} CLEARED</h2>
+                    <p style="margin: 15px 0; z-index:10; font-family:'Orbitron';">DATA SYNC COMPLETE.</p>
+                    <button class="action-btn" id="next-btn" style="border-color:var(--neon-cyan);">INITIATE NEXT >></button>
+                `;
+                area.querySelector("#next-btn").onclick = () => {
+                    level++;
+                    wordsCompleted = 0;
+                    if (level > 5) {
+                        area.innerHTML = `<h2 style="color:var(--neon-red); z-index:10;">SYSTEM HALTED</h2><h3 style="color:var(--neon-green); z-index:10;">FINAL SCORE: ${score}</h3><br><p style="z-index:10;">Select a protocol above to restart.</p>`;
+                    } else {
+                        loadCurrentLevelGame();
+                    }
+                };
+            }
 
+            function loadCurrentLevelGame() {
+                updateActiveTab();
+                if(level === 1) level1();
+                else if(level === 2) level2();
+                else if(level === 3) level3();
+                else if(level === 4) level4();
+                else if(level === 5) level5();
+            }
+
+            function renderProgress() {
+                return `<div class="progress-text">DATA LOG: ${wordsCompleted + 1} / ${WORDS_PER_LEVEL}</div>`;
+            }
+
+            // --- LEVEL 1: Unjumble ---
+            function level1() {
+                const item = TRANSPORT_DATA[Math.random() * TRANSPORT_DATA.length | 0];
+                const targetWord = item.name;
+                
+                let scrambled = shuffle(targetWord.replace(/\s/g, '').split('')).join('');
+                while(scrambled.toLowerCase() === targetWord.replace(/\s/g, '').toLowerCase() && targetWord.length > 1) {
+                    scrambled = shuffle(targetWord.replace(/\s/g, '').split('')).join('');
+                }
+
+                area.innerHTML = `
+                    ${renderProgress()}
+                    <h3>DECRYPT DATA</h3>
+                    <div class="hint-text">> SYSTEM CLUE: ${item.hint}</div>
+                    <div class="word">${scrambled}</div>
+                `;
+                
+                const input = document.createElement("input");
+                input.type = "text";
+                input.placeholder = "ENTER OVERRIDE CODE...";
+                
+                const btn = document.createElement("button");
+                btn.className = "action-btn";
+                btn.textContent = "VERIFY";
+
+                btn.onclick = () => {
+                    const sanitizedInput = input.value.replace(/\s/g, '').toLowerCase();
+                    const sanitizedTarget = targetWord.replace(/\s/g, '').toLowerCase();
+                    
+                    if(sanitizedInput === sanitizedTarget) {
+                        handleCorrect();
+                    } else {
+                        handleWrong();
+                        input.value = "";
+                    }
+                };
+
+                input.addEventListener("keypress", (e) => { if (e.key === "Enter") btn.click(); });
+
+                const actionContainer = document.createElement("div");
+                actionContainer.style.width = "100%";
+                actionContainer.style.zIndex = "10";
+                actionContainer.appendChild(input);
+                actionContainer.appendChild(document.createElement("br"));
+                actionContainer.appendChild(btn);
+
+                area.appendChild(actionContainer);
+                setTimeout(() => input.focus(), 100);
+            }
+
+            // --- LEVEL 2: Emojis ---
+            function level2() {
+                const item = TRANSPORT_DATA[Math.random() * TRANSPORT_DATA.length | 0];
+                
+                area.innerHTML = `
+                    ${renderProgress()}
+                    <h3>IDENTIFY ASSET</h3>
+                    <div class="big-emoji">${item.emoji}</div>
+                `;
+
+                const options = [...TRANSPORT_DATA].sort(() => Math.random() - 0.5).slice(0, 4).map(c => c.name);
+                if (!options.includes(item.name)) options[0] = item.name;
+                shuffle(options); 
+
+                const btnContainer = document.createElement("div");
+                btnContainer.className = "options-grid";
+                options.forEach(opt => {
+                    const btn = document.createElement("button");
+                    btn.className = "action-btn";
+                    btn.style.fontSize = "1rem";
+                    btn.textContent = opt;
+                    btn.onclick = () => {
+                        if (opt === item.name) {
+                            btn.classList.add('correct');
+                            setTimeout(() => handleCorrect(), 300);
+                        } else {
+                            btn.classList.add('wrong');
+                            handleWrong();
+                            setTimeout(() => btn.classList.remove('wrong'), 500);
+                        }
+                    };
+                    btnContainer.appendChild(btn);
+                });
+
+                area.appendChild(btnContainer);
+            }
+
+            // --- LEVEL 3: Descriptions ---
+            function level3() {
+                const item = TRANSPORT_DATA[Math.random() * TRANSPORT_DATA.length | 0];
+                
+                area.innerHTML = `
+                    ${renderProgress()}
+                    <h3>ANALYZE LOG</h3>
+                    <div class="hint-text" style="font-size: 1.2rem; min-height: 100px; display:flex; align-items:center; justify-content:center; text-align:center;">
+                        > LOG ENTRY: "${item.hint}"
+                    </div>
+                `;
+
+                const options = [...TRANSPORT_DATA].sort(() => Math.random() - 0.5).slice(0, 4).map(c => c.name);
+                if (!options.includes(item.name)) options[0] = item.name;
+                shuffle(options); 
+
+                const btnContainer = document.createElement("div");
+                btnContainer.className = "options-grid";
+                options.forEach(opt => {
+                    const btn = document.createElement("button");
+                    btn.className = "action-btn";
+                    btn.style.fontSize = "1rem";
+                    btn.textContent = opt;
+                    btn.onclick = () => {
+                        if(opt === item.name) {
+                            btn.classList.add('correct');
+                            setTimeout(() => handleCorrect(), 300);
+                        } else {
+                            btn.classList.add('wrong');
+                            handleWrong();
+                            setTimeout(() => btn.classList.remove('wrong'), 500);
+                        }
+                    };
+                    btnContainer.appendChild(btn);
+                });
+
+                area.appendChild(btnContainer);
+            }
+
+            // --- LEVEL 4: Memory Match (6x6 Grid) ---
+            function level4() {
+                area.innerHTML = `
+                    ${renderProgress()}
+                    <h3>MEMORY LINK</h3>
+                    <div class="memory-grid"></div>
+                `;
+
+                // Select 18 random transports to make 36 cards total
+                let selectedItems = shuffle([...TRANSPORT_DATA]).slice(0, 18);
+                let cardsArray = [...selectedItems, ...selectedItems];
+                shuffle(cardsArray);
+
+                const grid = area.querySelector('.memory-grid');
+                let flippedCards = [];
+                let lockBoard = false;
+                let pairsMatchedOnThisBoard = 0;
+
+                cardsArray.forEach((item) => {
+                    const card = document.createElement("div");
+                    card.className = "memory-card";
+                    card.dataset.name = item.name;
+                    
+                    const span = document.createElement("span");
+                    span.className = "emoji";
+                    span.textContent = item.emoji;
+                    card.appendChild(span);
+
+                    card.onclick = () => {
+                        if (lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+                        
+                        card.classList.add('flipped');
+                        flippedCards.push(card);
+
+                        if (flippedCards.length === 2) {
+                            lockBoard = true;
+                            const match = flippedCards[0].dataset.name === flippedCards[1].dataset.name;
+
+                            if (match) {
+                                setTimeout(() => {
+                                    flippedCards[0].classList.add('matched');
+                                    flippedCards[1].classList.add('matched');
+                                    flippedCards = [];
+                                    lockBoard = false;
+                                    pairsMatchedOnThisBoard++;
+                                    
+                                    handleCorrect(true); // true prevents reload
+                                    
+                                    // If board is fully cleared, reload a fresh board
+                                    if (pairsMatchedOnThisBoard === 18 && wordsCompleted < WORDS_PER_LEVEL) {
+                                        setTimeout(level4, 500); 
+                                    }
+                                }, 400);
+                            } else {
+                                handleWrong();
+                                setTimeout(() => {
+                                    flippedCards[0].classList.remove('flipped');
+                                    flippedCards[1].classList.remove('flipped');
+                                    flippedCards = [];
+                                    lockBoard = false;
+                                }, 800);
+                            }
+                        }
+                    };
+                    grid.appendChild(card);
+                });
+            }
+
+            // --- LEVEL 5: Catch It! ---
+            function level5() {
+                const targetItem = TRANSPORT_DATA[Math.random() * TRANSPORT_DATA.length | 0];
+                
+                area.innerHTML = `
+                    ${renderProgress()}
+                    <h3>INTERCEPT DATA</h3>
+                    <div class="big-emoji" style="margin-bottom: 0;">${targetItem.emoji}</div>
+                `;
+
+                clearFallingItems();
+
+                container.spawnInterval = setInterval(() => {
+                    const wordDiv = document.createElement("div");
+                    wordDiv.className = "falling";
+                    
+                    // 30% chance to spawn the correct name, 70% random distraction
+                    const isTarget = Math.random() > 0.7;
+                    const spawnItem = isTarget ? targetItem : TRANSPORT_DATA[Math.random() * TRANSPORT_DATA.length | 0];
+                    
+                    wordDiv.textContent = spawnItem.name;
+                    wordDiv.style.left = (5 + Math.random() * 70) + "%";
+                    wordDiv.style.animationDuration = (2.5 + Math.random() * 2) + "s";
+
+                    wordDiv.onclick = () => {
+                        if(wordDiv.textContent === targetItem.name) {
+                            clearFallingItems();
+                            handleCorrect();
+                        } else {
+                            handleWrong();
+                        }
+                        wordDiv.remove();
+                    };
+
+                    area.appendChild(wordDiv);
+                    setTimeout(() => {
+                        if(area.contains(wordDiv)) wordDiv.remove();
+                    }, 5000);
+                }, 1000);
+            }
+
+            container.querySelector(".restart").onclick = () => {
+                clearFallingItems();
+                score = 0; level = 1; wordsCompleted = 0;
+                scoreEl.textContent = 0;
+                loadCurrentLevelGame();
+            };
+
+            loadCurrentLevelGame();
+        }
+
+        // Initialize the two teams
+        createTeam(document.getElementById("boys"), "BOYS");
+        createTeam(document.getElementById("girls"), "GIRLS");
     </script>
 </body>
 </html>
